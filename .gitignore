@@ -1,0 +1,15 @@
+# Environment and secrets
+.venv/
+.env
+
+# Raw / temp data (re-downloadable; keep the folders via .gitkeep)
+data/raw/*
+!data/raw/.gitkeep
+data/temp/*
+!data/temp/.gitkeep
+
+# Python / notebook artifacts
+__pycache__/
+*.pyc
+checkpoints/
+.ipynb_checkpoints/
