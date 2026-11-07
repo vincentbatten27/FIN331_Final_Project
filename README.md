@@ -9,6 +9,26 @@ historical CAR of similar trades.
 Free data only: SEC insider transactions data sets, yfinance, Ken French
 factors, Wikipedia S&P 500 changes. No WRDS, no paid data, no API keys.
 
+## Team and roles
+
+| Role | Name | GitHub username | Branch | Owns |
+|---|---|---|---|---|
+| CEO | Vincent Batten | vincentbatten27 | main (reviews and merges) | this README, `CLAUDE.md`, reviewing every pull request, approving any change to `src/config.py` or the contract schemas |
+| Developer | Eric | ers226-crypto | dev-pipeline | data and event-study code: `src/fetch_sec.py`, `src/build_transactions.py`, `src/sp500_membership.py`, `src/fetch_prices.py`, `src/event_study.py`, `run_all.py`, `src/contracts.py` |
+| Product manager | David | dak728-arch | pm-app | `app.py` (the dashboard), `STATUS.md` |
+| Analyst | Vincent Batten | vab227 | analyst-classify | `src/classify_insiders.py`, `src/report.py`, `src/hand_check.py`, `audits/`, `specs_tried.md` (every number has a source and every spec is logged) |
+
+### Workflow
+
+- Nobody pushes to `main`. Work on your own branch and open a pull request.
+- The CEO reviews and merges every pull request.
+- Stay inside the files you own. If you need a change in someone else's file,
+  ask the owner or open an issue.
+- `src/config.py` and the two contract schemas are shared. Ask the CEO before
+  changing them.
+- Log every specification you run in `specs_tried.md`, including failures.
+- Never edit or commit `.env`.
+
 ## Unit of observation
 
 One row = one insider open-market purchase (Form 4, code P), identified by
@@ -30,24 +50,24 @@ t=6 for brevity, so those two values are the t=6 CAR.
 
 ## Pipeline
 
-Owners are placeholders until the team fills them in. Script names are the
-planned names; each lane creates its own scripts.
+Script names are the planned names. Each owner creates and maintains their own
+scripts (see Team and roles).
 
 | Step | Script | Output | Owner |
 |---|---|---|---|
-| 1. Download SEC insider data sets | `src/fetch_sec.py` | `data/raw/` | A |
-| 2. Build purchase table (dedupe, filing date, 10b5-1 flag) | `src/build_transactions.py` | `data/output/transactions.csv` | A |
-| 3. Point-in-time S&P 500 membership | `src/sp500_membership.py` | `data/output/sp500_membership.csv` | A |
-| 4. Prices, market proxy, factors | `src/fetch_prices.py` | `data/raw/` | B |
-| 5. Event study (market model, AR, CAR) | `src/event_study.py` | `data/output/event_panel.csv` | B |
-| 6. Routine / opportunistic classification | `src/classify_insiders.py` | `trade_type` in `transactions.csv` | C |
-| 7. Tables and figures | `src/report.py` | `outputs/` | C |
-| 8. Dashboard | `app.py` | (reads `outputs/`; sample data until real files exist) | C |
-| Hand check of random rows vs. EDGAR | `src/hand_check.py` | `audits/` | all |
+| 1. Download SEC insider data sets | `src/fetch_sec.py` | `data/raw/` | Developer |
+| 2. Build purchase table (dedupe, filing date, 10b5-1 flag) | `src/build_transactions.py` | `data/output/transactions.csv` | Developer |
+| 3. Point-in-time S&P 500 membership | `src/sp500_membership.py` | `data/output/sp500_membership.csv` | Developer |
+| 4. Prices, market proxy, factors | `src/fetch_prices.py` | `data/raw/` | Developer |
+| 5. Event study (market model, AR, CAR) | `src/event_study.py` | `data/output/event_panel.csv` | Developer |
+| 6. Routine / opportunistic classification | `src/classify_insiders.py` | `trade_type` in `transactions.csv` | Analyst |
+| 7. Tables and figures | `src/report.py` | `outputs/` | Analyst |
+| 8. Dashboard | `app.py` | (reads `outputs/`; sample data until real files exist) | Product manager |
+| Hand check of random rows vs. EDGAR | `src/hand_check.py` | `audits/` | Analyst (everyone helps check) |
 
 ## Contract schemas
 
-Steps communicate only through these two files. Ask the team before changing
+Steps communicate only through these two files. Ask the CEO before changing
 a column.
 
 ### `transactions.csv` (one row per purchase)
@@ -82,7 +102,7 @@ a column.
 
 ## Choices
 
-All live in `src/config.py`. "Proposed" = default awaiting team sign-off.
+All live in `src/config.py`. "Proposed" = default awaiting CEO sign-off.
 
 | Choice | Value | Status |
 |---|---|---|
@@ -114,7 +134,7 @@ streamlit run app.py              # dashboard (sample data until real outputs ex
 ## Folder layout
 
 ```
-src/          code (config.py is shared; one lane per file group)
+src/          code (config.py is shared; one owner per script, see Team and roles)
 data/raw/     downloads (git-ignored)
 data/temp/    caches / scratch (git-ignored)
 data/output/  contract files passed between steps
