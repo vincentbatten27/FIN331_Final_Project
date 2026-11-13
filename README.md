@@ -1,5 +1,49 @@
 # FIN331 Final Project: Do insider purchases predict returns?
 
+**Dashboard (live):** _link goes here once David deploys it_
+
+## 🚧 Checkpoint 2: what remains (due Sat Nov 14)
+
+**Start here (everyone):**
+1. `git fetch`, then `git checkout checkpoint-2`, then `git checkout -b <your branch>`.
+2. Create the venv, `pip install -r requirements.txt`, copy `.env.example` to `.env` and set `SEC_USER_AGENT`.
+3. Open your coding agent at the repo root. Tell it to read `CLAUDE.md` and this README, then paste your prompt below.
+4. Edit ONLY your own files. Open a PR into `checkpoint-2` and tag Vincent.
+
+**v0 scope (proposed, in `src/config.py`):** 10 tickers drawn with seed 331 from the Jan-1-2021 S&P 500 list in `data/reference/`, events filed 2021-01-01 to 2021-06-30, history from 2018-01-01.
+
+**Agreed output files** (`outputs/`; the Analyst writes them, the app reads them): `data_description.csv`, `summary_by_trade_type.csv`, `car_by_trade_type.png`.
+
+**Who waits on whom:** nobody has to wait. The app and the Analyst scripts build against `data/sample/` until Eric's real files land, then switch over. Eric's `transactions.csv` unblocks the real Analyst run, and his `event_panel.csv` unblocks real results in the app.
+
+### Eric (Developer), branch `dev-pipeline`
+- [ ] `DATA_SOURCES.md`: fill one row per raw input (source, date pulled, code that re-gets it)
+- [ ] `src/fetch_sec.py` and `src/build_transactions.py` write `data/output/transactions.csv`. DO THIS FIRST.
+- [ ] `src/sp500_membership.py`, `src/fetch_prices.py`, `src/event_study.py` write `data/output/event_panel.csv`
+- [ ] Wire every step into `run_all.py`
+> **Agent prompt:** Read CLAUDE.md and the README contract schemas. Build the Developer-owned scripts for the v0 scope in src/config.py. Event date is the filing date. Assert accession is unique and use validate= on every merge. Never fill data from memory. Edit only my files.
+
+### David (Product manager), branch `pm-app`
+- [ ] `docs/images/dashboard_mockup.png`: an Excalidraw sketch of the finished dashboard. Do this first.
+- [ ] `app.py` plus `pages/1_Intro.py`, `pages/2_Methodology.py`, `pages/3_Results.py`, `pages/4_Explore.py`, reading `outputs/` and falling back to `data/sample/`
+- [ ] Deploy on Streamlit Community Cloud, then put the link at the top of this README
+> **Agent prompt:** Read CLAUDE.md and the README. Build the four-page Streamlit app reading only from outputs/ or data/sample/. No hard-coded numbers. Edit only app.py and pages/.
+
+### Vincent (Analyst), branch `analyst-classify`
+- [ ] `src/data_description.py` writes `outputs/data_description.csv`
+- [ ] `src/classify_insiders.py` (routine vs opportunistic, no look-ahead)
+- [ ] `src/report.py` writes `outputs/summary_by_trade_type.csv` and `outputs/car_by_trade_type.png`
+- [ ] `src/hand_check.py` and `specs_tried.md` (log every spec)
+> **Agent prompt:** Read CLAUDE.md and the README. Build the Analyst-owned scripts against data/sample/ first, then the real files. Use only information available before each trade. Log every spec in specs_tried.md.
+
+### Vincent (CEO) and everyone
+- [ ] `STATUS.md` memo, written by hand
+- [ ] Merge PRs into `checkpoint-2`, test `run_all.py` on a clean clone, open the single PR to `main`
+- [ ] Run the Skeptical review prompt, then write `audits/01_self_audit.md` by hand
+- [ ] `PROPOSAL.md`, written by hand, last
+
+---
+
 Replication-style study of Cohen, Malloy & Pomorski (2012). Do open-market
 purchases by CEOs and CFOs of S&P 500 firms predict abnormal returns, and are
 "opportunistic" insiders more informative than "routine" ones? Output is a
@@ -13,9 +57,9 @@ factors, Wikipedia S&P 500 changes. No WRDS, no paid data, no API keys.
 
 | Role | Name | GitHub username | Branch | Owns |
 |---|---|---|---|---|
-| CEO | Vincent Batten | vincentbatten27 | main (reviews and merges) | this README, `CLAUDE.md`, reviewing every pull request, approving any change to `src/config.py` or the contract schemas |
+| CEO | Vincent Batten | vincentbatten27 | main (reviews and merges) | this README, `CLAUDE.md`, `STATUS.md`, `PROPOSAL.md`, reviewing every pull request, approving any change to `src/config.py` or the contract schemas |
 | Developer | Eric | ers226-crypto | dev-pipeline | data and event-study code: `src/fetch_sec.py`, `src/build_transactions.py`, `src/sp500_membership.py`, `src/fetch_prices.py`, `src/event_study.py`, `run_all.py`, `src/contracts.py` |
-| Product manager | David | dak728-arch | pm-app | `app.py` (the dashboard), `STATUS.md` |
+| Product manager | David | dak728-arch | pm-app | `app.py` and `pages/` (the dashboard), `docs/images/` (mockup) |
 | Analyst | Vincent Batten | vab227 | analyst-classify | `src/classify_insiders.py`, `src/report.py`, `src/hand_check.py`, `audits/`, `specs_tried.md` (every number has a source and every spec is logged) |
 
 ### Workflow
@@ -137,12 +181,15 @@ streamlit run app.py              # dashboard (sample data until real outputs ex
 src/          code (config.py is shared; one owner per script, see Team and roles)
 data/raw/     downloads (git-ignored)
 data/temp/    caches / scratch (git-ignored)
+data/reference/ small committed inputs (yearly S&P 500 list)
 data/output/  contract files passed between steps
 data/sample/  fake rows used by the app and for testing
 outputs/      every table/figure shown to users, produced by code
 audits/       hand-check notes and results
 dev/          scratch work not part of the pipeline
-STATUS.md     who is doing what, what is blocked
+STATUS.md     Checkpoint 1 memo (what we picked and why)
+DATA_SOURCES.md  provenance of every raw input
+dev/TASKS.md  team task tracker
 specs_tried.md  log of every specification run
 ```
 

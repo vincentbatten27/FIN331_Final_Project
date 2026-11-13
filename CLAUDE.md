@@ -28,7 +28,7 @@ Log every spec in specs_tried.md.
 4. No hard-coded numbers. Every number, table and figure shown must be produced by code into `outputs/`. Parameters live in `src/config.py`.
 5. Never fetch or fill data from model memory. If a source is unavailable, stop and say so.
 6. Log every specification you run in `specs_tried.md`, including failures.
-7. Stay inside your lane's files (lanes and owners in `STATUS.md`). Do not edit another lane's scripts.
+7. Stay inside the files you own (owners in the README "Team and roles" table). Do not edit another owner's files.
 8. Ask before changing `src/config.py` or either contract schema.
 9. Never edit or commit `.env`. Never push to or merge into `main`; work on your own branch and open a PR.
 10. Dedupe duplicate filings and amendments once, keyed on accession; flag 10b5-1 trades.
