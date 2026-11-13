@@ -25,13 +25,21 @@ EVENT_PANEL_CSV = DATA_OUTPUT / "event_panel.csv"
 SAMPLE_TRANSACTIONS_CSV = DATA_SAMPLE / "transactions.csv"
 SAMPLE_EVENT_PANEL_CSV = DATA_SAMPLE / "event_panel.csv"
 # Yearly S&P 500 constituents as of Jan 1 (one row per year, first column = year).
-SP500_YEARLY_CSV = DATA_RAW / "spx_yearly_tickers.csv"
+SP500_YEARLY_CSV = ROOT / "data" / "reference" / "spx_yearly_tickers.csv"  # committed
 
 # ---- Sample period (by FILING date) -- proposed ------------------------------
 # 3-year MVP window. History before SAMPLE_START feeds the routine classifier.
 SAMPLE_START = date(2020, 1, 1)
 SAMPLE_END = date(2022, 12, 31)
 HISTORY_START = date(2017, 1, 1)   # 3 prior years for the routine rule
+
+# ---- Checkpoint 2 (v0) scope -- proposed --------------------------------------------
+# Small end-to-end run. Draw V0_N_FIRMS tickers with SEED from the S&P 500 list
+# as of Jan 1 of V0_EVENT_START's year; never pick tickers by hand or from memory.
+V0_N_FIRMS = 10
+V0_EVENT_START = date(2021, 1, 1)   # filing dates
+V0_EVENT_END = date(2021, 6, 30)
+V0_HISTORY_START = date(2018, 1, 1)  # 3 prior years for the routine rule
 
 # ---- Event study ---------------------------------------------------------------
 EVENT_WINDOW = (1, 20)          # CAR[+1,+20] in trading days from the filing date

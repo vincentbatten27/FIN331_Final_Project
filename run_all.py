@@ -4,7 +4,7 @@
     python run_all.py --force    # rebuild every step
     python run_all.py --sample   # only validate data/sample/ against the contracts
 
-Lane owners add their script to STEPS (one line). Steps whose script does not
+Each owner adds their script to STEPS (one line). Steps whose script does not
 exist yet are reported as "not implemented" and do not fail the run.
 """
 import argparse
@@ -18,13 +18,13 @@ import contracts  # noqa: E402
 
 # (step name, script, outputs, owner)
 STEPS = [
-    ("fetch_sec", "src/fetch_sec.py", [config.DATA_RAW / "sec_done.flag"], "A"),
-    ("build_transactions", "src/build_transactions.py", [config.TRANSACTIONS_CSV], "A"),
-    ("sp500_membership", "src/sp500_membership.py", [config.DATA_OUTPUT / "sp500_membership.csv"], "A"),
-    ("fetch_prices", "src/fetch_prices.py", [config.DATA_RAW / "prices_done.flag"], "B"),
-    ("event_study", "src/event_study.py", [config.EVENT_PANEL_CSV], "B"),
-    ("classify_insiders", "src/classify_insiders.py", [config.DATA_OUTPUT / "classified.flag"], "C"),
-    ("report", "src/report.py", [config.OUTPUTS / "summary.csv"], "C"),
+    ("fetch_sec", "src/fetch_sec.py", [config.DATA_RAW / "sec_done.flag"], "Developer"),
+    ("build_transactions", "src/build_transactions.py", [config.TRANSACTIONS_CSV], "Developer"),
+    ("sp500_membership", "src/sp500_membership.py", [config.DATA_OUTPUT / "sp500_membership.csv"], "Developer"),
+    ("fetch_prices", "src/fetch_prices.py", [config.DATA_RAW / "prices_done.flag"], "Developer"),
+    ("event_study", "src/event_study.py", [config.EVENT_PANEL_CSV], "Developer"),
+    ("classify_insiders", "src/classify_insiders.py", [config.DATA_OUTPUT / "classified.flag"], "Analyst"),
+    ("report", "src/report.py", [config.OUTPUTS / "summary_by_trade_type.csv"], "Analyst"),
 ]
 
 
