@@ -16,6 +16,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 import config  # noqa: E402
 import contracts  # noqa: E402
 
+NOT_IMPLEMENTED = 2  # exit code a stub script uses
+
 # (step name, script, outputs, owner)
 STEPS = [
     ("fetch_sec", "src/fetch_sec.py", [config.DATA_RAW / "sec_done.flag"], "Developer"),
@@ -24,6 +26,7 @@ STEPS = [
     ("fetch_prices", "src/fetch_prices.py", [config.DATA_RAW / "prices_done.flag"], "Developer"),
     ("event_study", "src/event_study.py", [config.EVENT_PANEL_CSV], "Developer"),
     ("classify_insiders", "src/classify_insiders.py", [config.DATA_OUTPUT / "classified.flag"], "Analyst"),
+    ("data_description", "src/data_description.py", [config.OUTPUTS / "data_description.csv"], "Analyst"),
     ("report", "src/report.py", [config.OUTPUTS / "summary_by_trade_type.csv"], "Analyst"),
 ]
 
@@ -36,6 +39,8 @@ def run_step(name: str, script: str, outputs: list[Path], force: bool) -> str:
     if not force and all(p.exists() for p in outputs):
         return "skipped"
     result = subprocess.run([sys.executable, str(path)], cwd=config.ROOT)
+    if result.returncode == NOT_IMPLEMENTED:
+        return "not implemented"
     return "ran" if result.returncode == 0 else "FAILED"
 
 
