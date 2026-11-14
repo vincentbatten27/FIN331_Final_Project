@@ -7,7 +7,10 @@
 ## Files you own (edit only these)
 `src/classify_insiders.py`, `src/report.py`, `src/data_description.py`, `src/hand_check.py`, `specs_tried.md`, `audits/`, `STATUS.md`, `PROPOSAL.md`, `README.md`, `CLAUDE.md`, `src/config.py`.
 
-## Analyst work (you do NOT have to wait for Eric)
+## Analyst work: status
+The four Analyst scripts are written and tested on the fake sample (`python src/<script>.py --sample`; classifier self-test: `python dev/test_classifier.py`). Sample results go to `outputs/sample/`, never `outputs/`. What remains: rerun them on Eric's real `transactions.csv` and `event_panel.csv` (no flag), then hand-check rows on EDGAR with `python src/hand_check.py`, and log the specs in `specs_tried.md`.
+
+## Analyst work (original steps; you do NOT have to wait for Eric)
 Build every script against `data/sample/` first (use the `--sample` flag), then rerun on the real files when Eric's PR lands.
 1. **`src/data_description.py`**: done when `outputs/data_description.csv` exists.
 2. **`src/classify_insiders.py`**: done when `trade_type` is set using only filings dated before each trade, and a hand check of two insiders matches.
