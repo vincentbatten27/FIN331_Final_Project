@@ -4,43 +4,32 @@
 
 ## 🚧 Checkpoint 2: what remains (due Sat Nov 14)
 
-**Start here (everyone):**
-1. `git fetch`, then `git checkout checkpoint-2`, then `git checkout -b <your branch>`.
-2. Create the venv, `pip install -r requirements.txt`, copy `.env.example` to `.env` and set `SEC_USER_AGENT`.
-3. Open your coding agent at the repo root. Tell it to read `CLAUDE.md` and this README, then paste your prompt below.
-4. Edit ONLY your own files. Open a PR into `checkpoint-2` and tag Vincent.
+**Your job is in your brief:** [Eric](tasks/ERIC.md) · [David](tasks/DAVID.md) · [Vincent](tasks/VINCENT.md). Your coding agent reads it for you.
 
-**v0 scope (proposed, in `src/config.py`):** 10 tickers drawn with seed 331 from the Jan-1-2021 S&P 500 list in `data/reference/`, events filed 2021-01-01 to 2021-06-30, history from 2018-01-01.
+**New to GitHub? The idea in one minute.** The repo is a shared folder. A *branch* is your own private copy of it, so you can work without breaking the shared one. A *pull request* is you saying "I'm done, please add my work." Your agent does the Git commands for you.
 
-**Agreed output files** (`outputs/`; the Analyst writes them, the app reads them): `data_description.csv`, `summary_by_trade_type.csv`, `car_by_trade_type.png`.
+### Setup (once)
+1. Accept the GitHub invite in your email.
+2. Install GitHub Desktop and VS Code. In GitHub Desktop choose File → Clone repository → `FIN331_Final_Project`. Open the folder in VS Code and start your coding agent there.
+3. Paste **Prompt A** (below), replacing `<NAME>` with `Eric`, `David` or `Vincent` (same for Prompt C).
+4. Then paste **Prompt C**: "Read `CLAUDE.md` and `tasks/<NAME>.md`. Do the steps in order, one at a time. After each step, check its 'done when' line and show me the result before starting the next. Edit only the files my brief says I own."
+5. When finished, paste **Prompt B**.
 
-**Who waits on whom:** nobody has to wait. The app and the Analyst scripts build against `data/sample/` until Eric's real files land, then switch over. Eric's `transactions.csv` unblocks the real Analyst run, and his `event_panel.csv` unblocks real results in the app.
+**Prompt A (setup):**
+> Read `CLAUDE.md` and `README.md`. I'm new to GitHub, so explain each step in one short sentence. Please: (1) switch to the `checkpoint-2` branch; (2) create my own branch called `<NAME>` from it, replacing any older local copy; (3) create a `.venv` and install `requirements.txt`; (4) copy `.env.example` to `.env` and tell me exactly what to type for `SEC_USER_AGENT` (do not fill it in yourself). Never touch `main`. Stop when done and tell me what you did.
 
-### Eric (Developer), branch `dev-pipeline`
-- [ ] `DATA_SOURCES.md`: fill one row per raw input (source, date pulled, code that re-gets it)
-- [ ] `src/fetch_sec.py` and `src/build_transactions.py` write `data/output/transactions.csv`. DO THIS FIRST.
-- [ ] `src/sp500_membership.py`, `src/fetch_prices.py`, `src/event_study.py` write `data/output/event_panel.csv`
-- [ ] Wire every step into `run_all.py`
-> **Agent prompt:** Read CLAUDE.md and the README contract schemas. Build the Developer-owned scripts for the v0 scope in src/config.py. Event date is the filing date. Assert accession is unique and use validate= on every merge. Never fill data from memory. Edit only my files.
+**Prompt B (send it back):**
+> Show me every file that changed. If they are all files I own (listed in my brief), commit them with a clear message, push my branch, and open a pull request into `checkpoint-2` (not `main`). Then give me the link.
 
-### David (Product manager), branch `pm-app`
-- [ ] `docs/images/dashboard_mockup.png`: an Excalidraw sketch of the finished dashboard. Do this first.
-- [ ] `app.py` plus `pages/1_Intro.py`, `pages/2_Methodology.py`, `pages/3_Results.py`, `pages/4_Explore.py`, reading `outputs/` and falling back to `data/sample/`
-- [ ] Deploy on Streamlit Community Cloud, then put the link at the top of this README
-> **Agent prompt:** Read CLAUDE.md and the README. Build the four-page Streamlit app reading only from outputs/ or data/sample/. No hard-coded numbers. Edit only app.py and pages/.
+### Facts everyone needs
+- **v0 scope (proposed, in `src/config.py`):** 10 tickers drawn with seed 331 from the Jan-1-2021 S&P 500 list in `data/reference/`, events filed 2021-01-01 to 2021-06-30, history from 2018-01-01.
+- **`outputs/` files the app reads:** `data_description.csv`, `summary_by_trade_type.csv`, `car_by_trade_type.png`.
+- **Nobody waits on anyone.** The app and the Analyst scripts build against `data/sample/` until Eric's real files land. Eric's `transactions.csv` unblocks the real Analyst run, and his `event_panel.csv` unblocks real results in the app.
+- **Stub files** (`src/*.py`, `pages/*.py`) already exist with instructions in their docstrings. Fill them in; do not rename them.
+- Check before any PR: `python run_all.py --sample` prints `sample contracts: OK`.
 
-### Vincent (Analyst), branch `analyst-classify`
-- [ ] `src/data_description.py` writes `outputs/data_description.csv`
-- [ ] `src/classify_insiders.py` (routine vs opportunistic, no look-ahead)
-- [ ] `src/report.py` writes `outputs/summary_by_trade_type.csv` and `outputs/car_by_trade_type.png`
-- [ ] `src/hand_check.py` and `specs_tried.md` (log every spec)
-> **Agent prompt:** Read CLAUDE.md and the README. Build the Analyst-owned scripts against data/sample/ first, then the real files. Use only information available before each trade. Log every spec in specs_tried.md.
-
-### Vincent (CEO) and everyone
-- [ ] `STATUS.md` memo, written by hand
-- [ ] Merge PRs into `checkpoint-2`, test `run_all.py` on a clean clone, open the single PR to `main`
-- [ ] Run the Skeptical review prompt, then write `audits/01_self_audit.md` by hand
-- [ ] `PROPOSAL.md`, written by hand, last
+### Not agent work (written by hand, Vincent)
+`STATUS.md` memo, `audits/01_self_audit.md`, `PROPOSAL.md`.
 
 ---
 
@@ -58,9 +47,9 @@ factors, Wikipedia S&P 500 changes. No WRDS, no paid data, no API keys.
 | Role | Name | GitHub username | Branch | Owns |
 |---|---|---|---|---|
 | CEO | Vincent Batten | vincentbatten27 | main (reviews and merges) | this README, `CLAUDE.md`, `STATUS.md`, `PROPOSAL.md`, reviewing every pull request, approving any change to `src/config.py` or the contract schemas |
-| Developer | Eric | ers226-crypto | dev-pipeline | data and event-study code: `src/fetch_sec.py`, `src/build_transactions.py`, `src/sp500_membership.py`, `src/fetch_prices.py`, `src/event_study.py`, `run_all.py`, `src/contracts.py` |
-| Product manager | David | dak728-arch | pm-app | `app.py` and `pages/` (the dashboard), `docs/images/` (mockup) |
-| Analyst | Vincent Batten | vab227 | analyst-classify | `src/classify_insiders.py`, `src/report.py`, `src/hand_check.py`, `audits/`, `specs_tried.md` (every number has a source and every spec is logged) |
+| Developer | Eric Schneps | ers226-crypto | Eric | data and event-study code: `src/fetch_sec.py`, `src/build_transactions.py`, `src/sp500_membership.py`, `src/fetch_prices.py`, `src/event_study.py`, `run_all.py`, `src/contracts.py`, `DATA_SOURCES.md` |
+| Product manager | David | dak728-arch | David | `app.py` and `pages/` (the dashboard), `docs/images/` (mockup) |
+| Analyst | Vincent Batten | vab227 | Vincent | `src/classify_insiders.py`, `src/report.py`, `src/data_description.py`, `src/hand_check.py`, `audits/`, `specs_tried.md` (every number has a source and every spec is logged) |
 
 ### Workflow
 
