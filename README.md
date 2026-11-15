@@ -1,6 +1,6 @@
 # FIN331 Final Project: Do insider purchases predict returns?
 
-**Dashboard (live):** _link goes here once David deploys it_
+**Dashboard (live):** https://fin331-finalproject.streamlit.app/
 
 ## 🚧 Checkpoint 2: what remains (due Sat Nov 14)
 
