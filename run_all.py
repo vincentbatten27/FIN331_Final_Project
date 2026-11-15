@@ -19,10 +19,12 @@ import contracts  # noqa: E402
 NOT_IMPLEMENTED = 2  # exit code a stub script uses
 
 # (step name, script, outputs, owner)
+# sp500_membership runs first: build_transactions and fetch_prices read v0_universe.csv.
 STEPS = [
+    ("sp500_membership", "src/sp500_membership.py",
+     [config.DATA_OUTPUT / "sp500_membership.csv", config.DATA_OUTPUT / "v0_universe.csv"], "Developer"),
     ("fetch_sec", "src/fetch_sec.py", [config.DATA_RAW / "sec_done.flag"], "Developer"),
     ("build_transactions", "src/build_transactions.py", [config.TRANSACTIONS_CSV], "Developer"),
-    ("sp500_membership", "src/sp500_membership.py", [config.DATA_OUTPUT / "sp500_membership.csv"], "Developer"),
     ("fetch_prices", "src/fetch_prices.py", [config.DATA_RAW / "prices_done.flag"], "Developer"),
     ("event_study", "src/event_study.py", [config.EVENT_PANEL_CSV], "Developer"),
     ("classify_insiders", "src/classify_insiders.py", [config.DATA_OUTPUT / "classified.flag"], "Analyst"),
