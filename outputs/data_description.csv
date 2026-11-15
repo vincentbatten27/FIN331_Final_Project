@@ -1,0 +1,16 @@
+metric,value
+first_filing_date,2018-06-14
+last_filing_date,2021-05-06
+n_purchases,7
+n_firms,4
+n_insiders,6
+n_events_with_returns,1
+n_10b5_1_trades,0
+n_role_CEO,5
+n_role_CFO,2
+n_trade_type_unclassified,6
+n_trade_type_opportunistic,1
+usd_value_min,19769.69
+usd_value_median,99000.0
+usd_value_mean,243834.79
+usd_value_max,1003233.0
