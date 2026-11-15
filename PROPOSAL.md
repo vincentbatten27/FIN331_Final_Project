@@ -31,7 +31,7 @@ Each row represents an open-market purchase made by a CEO or CFO of a single fir
 | 0001225208-20-008449 | UPS | CEO | 2020-06-02 | 2020-05-29 | 1,003,233 | 0 | unclassified | (history) |
 | 0001209191-21-030636 | WY | CFO | 2021-05-06 | 2021-05-05 | 385,600 | 0 | unclassified | −0.1065 |
 
-"trade_type" is routine, opportunistic or unclassified. "Car_1_20" (Cumulative Annual Return) is a measure of how well the stock performed compared to its expected return over the next 20 trading days after the filing.
+"trade_type" is routine, opportunistic or unclassified. "car_1_20" (cumulative abnormal return) is a measure of how well the stock performed compared to its expected return, added up over trading days +1 to +20 after the filing.
 
 ### Sample
 
@@ -41,7 +41,7 @@ In addition to the event date and insiders' ID and role, the variables used in o
 
 ### Raw inputs
 
-Three public data sources are used in this research. The insider transactions are pulled from SEC's quarterly Insider Transactions Data Sets, saved to `data/raw/`. Stock and SPY daily prices are downloaded using the `yfinance` package and saved in `data/raw/prices/`. The list of S&P 500 members starts from the members as of January 1st of each year, 2000-2026, kept in `data/reference/`, which is updated to include the quarterly S&P 500 rebalancing through `src/sp500_membership.py`.
+Three public data sources are used in this research. The insider transactions are pulled from SEC's quarterly Insider Transactions Data Sets, saved to `data/raw/`. Stock and SPY daily prices are downloaded using the `yfinance` package and saved in `data/raw/prices/`. The list of S&P 500 members starts from the members as of January 1st of each year, 2000-2026, kept in `data/reference/`. `src/sp500_membership.py` turns it into a year-by-ticker table. Index changes that happen during a year are not included yet.
 
 ---
 
@@ -82,7 +82,7 @@ For further work/a more in-depth analsyis, we could run the same test on insider
 
 The most significant threat that was apparent to us in this study is look-ahead bias. If we used the trade date, we would have been using information nobody knew yet (like the NOC row, for example), so we will use the event date (the filing date). This is inherent to work done with help from LLMs as well, as was marked in previous Event Studies.
 
-The next threat we have to consider is survivorship. Today's S&P 500 list leaves out the stocks that were dropped from the index, so we base it upon the membership as of each filing date. Duplicate and amended filings can make one and the same trade appear in two or more filings, so we are keeping only the earliest filing.
+The next threat we have to consider is survivorship. Today's S&P 500 list leaves out the stocks that were dropped from the index, so we base it upon the membership list as of January 1st of the year of each filing. This misses firms added or dropped partway through a year, which is a limitation. Duplicate and amended filings can make one and the same trade appear in two or more filings, so we are keeping only the earliest filing.
 
 Finally, a more practical threat for this project is sample size. Big companies' executives do not routinely purchase stock in their own company at an abnormal level, and our first run found only one usable event across 10 firms in six months. We are hoping that using the whole S&P 500 for three years will make a difference, but if there is still a lack of routine transactions to compare with, other officer transactions will be included.
 
