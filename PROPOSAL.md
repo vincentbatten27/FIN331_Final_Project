@@ -82,7 +82,7 @@ An event study fits this question because each filing is a specific day when new
 
 The most significant threat that was apparent to us in this study is look-ahead bias. If we used the trade date, we would have been using information nobody knew yet (like the NOC row, for example), so we will use the event date (the filing date). The same problem could show up when classifying trades if we used filings the insider made later, so the classifier only looks at filings from before each purchase.
 
-The next threat we have to consider is survivorship. Today's S&P 500 list leaves out the stocks that were dropped from the index, often because of poor performance, so we base it upon the membership as of each filing date. Duplicate and amended filings can make one and the same trade appear in two or more filings, so we are keeping only the earliest filing.
+The next threat we have to consider is survivorship. Today's S&P 500 list leaves out the stocks that were dropped from the index, so we base it upon the membership as of each filing date. Duplicate and amended filings can make one and the same trade appear in two or more filings, so we are keeping only the earliest filing.
 
 In order to prevent ourselves from p-hacking, all of the settings are fixed in "src/config.py" prior to looking through any results, and each new attempt gets recorded in "specs_tried.md".
 
