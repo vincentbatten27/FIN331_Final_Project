@@ -1,24 +1,41 @@
 """Descriptive statistics of the final dataset.
 
-Owner: Analyst (Vincent). STATUS: STUB, not implemented yet.
-
-Inputs : transactions.csv and event_panel.csv (or data/sample/ with --sample).
-Output : outputs/data_description.csv: first and last filing date, number of firms,
-         number of purchases, counts by role and trade_type, and usd_value summary.
-
-Rules: event date is the filing date; never fill data from memory (look up
-file layouts in the official documentation); no hard-coded numbers (use
-src/config.py); keep the contract columns in README.md exactly; log any spec you
-try in specs_tried.md.
+Writes data_description.csv (metric, value) to outputs/ (or outputs/sample/ with --sample).
+Every number is computed from the input files; nothing is typed in.
 """
-import sys
+import pandas as pd
 
-import config  # noqa: F401  (all paths and parameters come from src/config.py)
+import analyst_io as aio
+
+
+def describe(tx: pd.DataFrame, panel: pd.DataFrame) -> pd.DataFrame:
+    rows = [
+        ("first_filing_date", tx["filing_date"].min().date()),
+        ("last_filing_date", tx["filing_date"].max().date()),
+        ("n_purchases", len(tx)),
+        ("n_firms", tx["issuer_cik"].nunique()),
+        ("n_insiders", tx["insider_cik"].nunique()),
+        ("n_events_with_returns", panel["accession"].nunique()),
+        ("n_10b5_1_trades", int(tx["is_10b5_1"].sum())),
+    ]
+    for role, n in tx["role"].value_counts().items():
+        rows.append((f"n_role_{role}", int(n)))
+    for kind, n in tx["trade_type"].value_counts().items():
+        rows.append((f"n_trade_type_{kind}", int(n)))
+    for stat in ("min", "median", "mean", "max"):
+        rows.append((f"usd_value_{stat}", round(float(getattr(tx["usd_value"], stat)()), 2)))
+    return pd.DataFrame(rows, columns=["metric", "value"])
 
 
 def main() -> None:
-    print("data_description.py: stub, not implemented yet")
-    sys.exit(2)  # exit code 2 = "not implemented"; run_all.py reports it as such
+    args = aio.parse_args(__doc__)
+    tx_path, panel_path, out_dir = aio.paths(args.sample)
+    aio.require(tx_path, "transactions.csv")
+    aio.require(panel_path, "event_panel.csv")
+    out = describe(aio.load_transactions(tx_path), aio.load_panel(panel_path))
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out.to_csv(out_dir / "data_description.csv", index=False)
+    print(out.to_string(index=False))
 
 
 if __name__ == "__main__":

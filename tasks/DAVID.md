@@ -7,6 +7,9 @@
 ## Files you own (edit only these)
 `app.py`, `pages/1_Intro.py`, `pages/2_Methodology.py`, `pages/3_Results.py`, `pages/4_Explore.py`, `docs/images/` (mockup).
 
+## Sample outputs already exist (use them now)
+`outputs/sample/` holds `summary_by_trade_type.csv`, `car_by_trade_type.png` and `data_description.csv`, built from the fake sample rows. Real results will appear in `outputs/` with the same file names. Each page should read `outputs/<file>` if it exists, otherwise `outputs/sample/<file>` with a visible "SAMPLE DATA" warning.
+
 ## You do NOT have to wait for anyone
 The data scripts are being built in parallel. Build against `data/sample/` (fake rows with the same columns). When real files land in `outputs/` and `data/output/`, the same code reads them.
 
