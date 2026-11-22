@@ -1,0 +1,11 @@
+metric,value
+firms_on_jan1_list,498
+firms_without_filings_in_event_window,20
+firms_without_yfinance_prices,44
+purchases_filed_in_event_window,52
+purchases_passing_size_and_10b5_1_filters,28
+events_with_returns,19
+events_dropped_no_prices,9
+unique_firm_filing_days,17
+tickers_without_filings,BALL BBWI BF/B BIO BRK/B CPAY EG ELV FBIN FOXA FRCB GAP GOOGL LEN META NWSA PARA RVTY SIVBQ WTW
+tickers_without_prices,ABMD ALXN ANSS ATVI AVB BK CERN CMA CTLT CTRA CTXS CXO DFS DISCA DISCK DISH DRE EA EQR FI FLIR HBI HES HFC HOLX IPG JNPR K KSU LEG MMC MRO MXIM NLSN PBCT PXD QRVO SEE SIVBQ TWTR VAR WBA WRK XLNX
