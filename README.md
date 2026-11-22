@@ -1,37 +1,6 @@
 # FIN331 Final Project: Do insider purchases predict returns?
 
-**Dashboard (live):** https://fin331-finalproject.streamlit.app/
-
-## 🚧 Checkpoint 2: what remains (due Sat Nov 14)
-
-**Your job is in your brief:** [Eric](tasks/ERIC.md) · [David](tasks/DAVID.md) · [Vincent](tasks/VINCENT.md). Your coding agent reads it for you.
-
-**New to GitHub? The idea in one minute.** The repo is a shared folder. A *branch* is your own private copy of it, so you can work without breaking the shared one. A *pull request* is you saying "I'm done, please add my work." Your agent does the Git commands for you.
-
-### Setup (once)
-1. Accept the GitHub invite in your email.
-2. Install GitHub Desktop and VS Code. In GitHub Desktop choose File → Clone repository → `FIN331_Final_Project`. Open the folder in VS Code and start your coding agent there.
-3. Paste **Prompt A** (below), replacing `<NAME>` with `Eric`, `David` or `Vincent` (same for Prompt C).
-4. Then paste **Prompt C**: "Read `CLAUDE.md` and `tasks/<NAME>.md`. Do the steps in order, one at a time. After each step, check its 'done when' line and show me the result before starting the next. Edit only the files my brief says I own."
-5. When finished, paste **Prompt B**.
-
-**Prompt A (setup):**
-> Read `CLAUDE.md` and `README.md`. I'm new to GitHub, so explain each step in one short sentence. Please: (1) switch to the `checkpoint-2` branch; (2) create my own branch called `<NAME>` from it, replacing any older local copy; (3) create a `.venv` and install `requirements.txt`; (4) copy `.env.example` to `.env` and tell me exactly what to type for `SEC_USER_AGENT` (do not fill it in yourself). Never touch `main`. Stop when done and tell me what you did.
-
-**Prompt B (send it back):**
-> Show me every file that changed. If they are all files I own (listed in my brief), commit them with a clear message, push my branch, and open a pull request into `checkpoint-2` (not `main`). Then give me the link.
-
-### Facts everyone needs
-- **v0 scope (proposed, in `src/config.py`):** 10 tickers drawn with seed 331 from the Jan-1-2021 S&P 500 list in `data/reference/`, events filed 2021-01-01 to 2021-06-30, history from 2018-01-01.
-- **`outputs/` files the app reads:** `data_description.csv`, `summary_by_trade_type.csv`, `car_by_trade_type.png`.
-- **Nobody waits on anyone.** The app and the Analyst scripts build against `data/sample/` until Eric's real files land. Eric's `transactions.csv` unblocks the real Analyst run, and his `event_panel.csv` unblocks real results in the app.
-- **Stub files** (`src/*.py`, `pages/*.py`) already exist with instructions in their docstrings. Fill them in; do not rename them.
-- Check before any PR: `python run_all.py --sample` prints `sample contracts: OK`.
-
-### Not agent work (written by hand, Vincent)
-`STATUS.md` memo, `audits/01_self_audit.md`, `PROPOSAL.md`.
-
----
+**Dashboard (live):** https://fin331-finalproject.streamlit.app/ · **Proposal:** [PROPOSAL.md](PROPOSAL.md) · **Audits:** [audits/](audits/)
 
 Replication-style study of Cohen, Malloy & Pomorski (2012). Do open-market
 purchases by CEOs and CFOs of S&P 500 firms predict abnormal returns, and are
@@ -39,28 +8,29 @@ purchases by CEOs and CFOs of S&P 500 firms predict abnormal returns, and are
 Streamlit dashboard showing recent opportunistic purchases next to the
 historical CAR of similar trades.
 
-Free data only: SEC insider transactions data sets, yfinance, Ken French
-factors, Wikipedia S&P 500 changes. No WRDS, no paid data, no API keys.
+Free data only: SEC insider transactions data sets, yfinance, and the yearly
+Jan-1 S&P 500 constituent list in `data/reference/`. No WRDS, no paid data, no API keys.
 
-## Team and roles
+**Status (Checkpoint 2, v0):** the pipeline runs end to end on a small sample
+(10 firms, events filed Jan-Jun 2021). That sample has too few events for the
+routine-vs-opportunistic comparison; see `outputs/data_description.csv`,
+`outputs/summary_by_trade_type.csv`, the wider all-firm test in
+`dev/all_firms_test/`, and the open issues in `audits/`.
 
-| Role | Name | GitHub username | Branch | Owns |
-|---|---|---|---|---|
-| CEO | Vincent Batten | vincentbatten27 | main (reviews and merges) | this README, `CLAUDE.md`, `STATUS.md`, `PROPOSAL.md`, reviewing every pull request, approving any change to `src/config.py` or the contract schemas |
-| Developer | Eric Schneps | ers226-crypto | Eric | data and event-study code: `src/fetch_sec.py`, `src/build_transactions.py`, `src/sp500_membership.py`, `src/fetch_prices.py`, `src/event_study.py`, `run_all.py`, `src/contracts.py`, `DATA_SOURCES.md` |
-| Product manager | David | dak728-arch | David | `app.py` and `pages/` (the dashboard), `docs/images/` (mockup) |
-| Analyst | Vincent Batten | vab227 | Vincent | `src/classify_insiders.py`, `src/report.py`, `src/data_description.py`, `src/hand_check.py`, `audits/`, `specs_tried.md` (every number has a source and every spec is logged) |
+## How to run
 
-### Workflow
+```bash
+python -m venv .venv
+.venv\Scripts\activate            # Windows; use source .venv/bin/activate elsewhere
+pip install -r requirements.txt
+copy .env.example .env            # then set SEC_USER_AGENT="Your Name you@lehigh.edu"
+python run_all.py                 # skips steps whose output already exists
+python run_all.py --force         # rebuild everything
+streamlit run app.py              # dashboard
+```
 
-- Nobody pushes to `main`. Work on your own branch and open a pull request.
-- The CEO reviews and merges every pull request.
-- Stay inside the files you own. If you need a change in someone else's file,
-  ask the owner or open an issue.
-- `src/config.py` and the two contract schemas are shared. Ask the CEO before
-  changing them.
-- Log every specification you run in `specs_tried.md`, including failures.
-- Never edit or commit `.env`.
+`python run_all.py --sample` only checks the fake files in `data/sample/` against the schemas.
+New to the team? See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Unit of observation
 
@@ -90,7 +60,7 @@ scripts (see Team and roles).
 |---|---|---|---|
 | 1. Download SEC insider data sets | `src/fetch_sec.py` | `data/raw/` | Developer |
 | 2. Build purchase table (dedupe, filing date, 10b5-1 flag) | `src/build_transactions.py` | `data/output/transactions.csv` | Developer |
-| 3. Point-in-time S&P 500 membership | `src/sp500_membership.py` | `data/output/sp500_membership.csv` | Developer |
+| 3. S&P 500 membership (yearly Jan-1 lists) | `src/sp500_membership.py` | `data/output/sp500_membership.csv` | Developer |
 | 4. Prices, market proxy, factors | `src/fetch_prices.py` | `data/raw/` | Developer |
 | 5. Event study (market model, AR, CAR) | `src/event_study.py` | `data/output/event_panel.csv` | Developer |
 | 6. Routine / opportunistic classification | `src/classify_insiders.py` | `trade_type` in `transactions.csv` | Analyst |
@@ -135,63 +105,85 @@ a column.
 
 ## Choices
 
-All live in `src/config.py`. "Proposed" = default awaiting CEO sign-off.
+All live in `src/config.py`.
 
 | Choice | Value | Status |
 |---|---|---|
 | Python | 3.12 | decided |
-| Sample period (filing dates) | 2020-01-01 to 2022-12-31 (3-year MVP) | proposed |
-| History for routine rule | from 2017-01-01 | proposed |
+| v0 sample (Checkpoint 2) | 10 tickers (seed 331) from the Jan-1-2021 S&P 500 list; events filed 2021-01-01 to 2021-06-30 | in use |
+| Full-study sample (v1 target) | filings 2020-01-01 to 2022-12-31 (3-year MVP) | planned |
+| History for the routine rule | 3 prior years of purchases (v0: from 2018-01-01; full study: from 2017-01-01) | in use |
 | Roles | CEO, CFO | decided |
 | Event date | filing date | decided (hard rule) |
-| Event window | (+1, +20) | decided |
-| Estimation window | (-250, -30), min 120 valid days | proposed (min days) |
-| Benchmark | market model on SPY | proposed |
-| Size filter | usd_value >= $10,000 | proposed |
-| 10b5-1 | flagged; excluded from main spec | proposed |
-| Routine rule | same calendar month in each of the prior 3 years (Cohen et al.) | proposed |
+| Event window | (+1, +20) trading days | decided |
+| Estimation window | (-250, -30), at least 120 valid days | in use |
+| Benchmark | market model on SPY | in use |
+| Size filter | usd_value >= $10,000 | in use |
+| 10b5-1 | flagged; excluded from the main spec | in use |
+| Routine rule | same calendar month in each of the prior 3 years (Cohen et al.); v0 history is purchases only | in use |
 | Seed | 331 | decided |
 
-## How to run
+## Team and roles
 
-```bash
-python -m venv .venv
-.venv\Scripts\activate            # Windows; use source .venv/bin/activate elsewhere
-pip install -r requirements.txt
-copy .env.example .env            # then set SEC_USER_AGENT="Your Name you@lehigh.edu"
-python run_all.py                 # skips steps whose output already exists
-python run_all.py --force         # rebuild everything
-streamlit run app.py              # dashboard (sample data until real outputs exist)
-```
+| Role | Name | GitHub username | Branch | Owns |
+|---|---|---|---|---|
+| CEO | Vincent Batten | vincentbatten27 | main (reviews and merges) | this README, `CLAUDE.md`, `STATUS.md`, `PROPOSAL.md`, reviewing every pull request, approving any change to `src/config.py` or the contract schemas |
+| Developer | Eric Schneps | ers226-crypto | Eric | data and event-study code: `src/fetch_sec.py`, `src/build_transactions.py`, `src/sp500_membership.py`, `src/fetch_prices.py`, `src/event_study.py`, `run_all.py`, `src/contracts.py`, `DATA_SOURCES.md` |
+| Product manager | David | dak728-arch | David | `app.py` and `pages/` (the dashboard), `docs/images/` (mockup) |
+| Analyst | Vincent Batten | vab227 | Vincent | `src/classify_insiders.py`, `src/report.py`, `src/data_description.py`, `src/hand_check.py`, `audits/`, `specs_tried.md` (every number has a source and every spec is logged) |
+
+### Workflow
+
+- Nobody pushes to `main`. Work on your own branch and open a pull request.
+- The CEO reviews and merges every pull request.
+- Stay inside the files you own. If you need a change in someone else's file,
+  ask the owner or open an issue.
+- `src/config.py` and the two contract schemas are shared. Ask the CEO before
+  changing them.
+- Log every specification you run in `specs_tried.md`, including failures.
+- Never edit or commit `.env`.
 
 ## Folder layout
 
 ```
-src/          code (config.py is shared; one owner per script, see Team and roles)
-data/raw/     downloads (git-ignored)
-data/temp/    caches / scratch (git-ignored)
-data/reference/ small committed inputs (yearly S&P 500 list)
-data/output/  contract files passed between steps
-data/sample/  fake rows used by the app and for testing
-outputs/      every table/figure shown to users, produced by code
-audits/       hand-check notes and results
-dev/          scratch work not part of the pipeline
-STATUS.md     Checkpoint 1 memo (what we picked and why)
-DATA_SOURCES.md  provenance of every raw input
-dev/TASKS.md  team task tracker
-specs_tried.md  log of every specification run
+src/              code (config.py is shared; one owner per script, see Team and roles)
+pages/, app.py    Streamlit dashboard
+data/raw/         downloads (git-ignored)
+data/temp/        caches / scratch (git-ignored)
+data/reference/   small committed inputs (yearly S&P 500 list)
+data/output/      contract files passed between steps
+data/sample/      fake rows used by the app and for testing
+outputs/          every table/figure shown to users, produced by code
+audits/           self-audit, instructor audit and response, EDGAR hand check
+dev/              tests and scratch work (classifier test, all-firm test run)
+tasks/, CONTRIBUTING.md   team setup and per-person briefs
+docs/images/      dashboard mockup and screenshot
+PROPOSAL.md       project proposal
+STATUS.md         Checkpoint 1 memo (what we picked and why)
+DATA_SOURCES.md   provenance of every raw input
+specs_tried.md    log of every specification run
 ```
 
 ## Threats to validity
 
+- **Sample size:** the v0 sample (10 firms, six months) produced too few events to compare
+  routine and opportunistic purchases. A wider test in `dev/all_firms_test/` finds
+  more events but few routine ones; the full study needs a longer period.
 - **Survivorship:** firms delisted or acquired during the sample may be missing
-  from free price data (yfinance), biasing returns upward.
+  from free price data (yfinance), biasing returns upward. The all-firm test lists
+  the tickers without prices in `dev/all_firms_test/coverage.csv`.
 - **Look-ahead:** the event is dated at the filing date; routine classification
-  uses only trades before each trade; S&P membership must be as of the event.
+  uses only filings dated before each trade.
+- **S&P 500 membership:** based on yearly Jan-1 lists, not dated index changes.
+  Additions and removals during a year are misdated, and the v0 universe is drawn
+  from the same list used to check it. Planned fix: membership spells from dated
+  changes (see `audits/03_audit_response.md`).
 - **Overlapping events:** repeated purchases by the same insider or firm within
   20 trading days share return windows, so observations are not independent.
-- **10b5-1 plans:** planned trades carry no new information; flagged by
-  `is_10b5_1`, and the flag is only reliable in recent filings.
-- **S&P 500 membership:** reconstructed from Wikipedia change tables and yearly
-  Jan-1 lists, not a vendor point-in-time file; mid-year additions/removals and
-  ticker reuse can be misdated.
+- **10b5-1 plans:** before 2023 the flag comes from footnote and remark text, not a
+  structured field, so it can be wrong in either direction.
+- **Classification:** a purchase is labelled opportunistic when it is not routine, including an
+  insider's first purchase in the data. History is purchases only.
+- **Data quality:** the EDGAR hand check (`audits/hand_check_v0.csv`) found one purchase
+  that is not an informative insider decision (shares bought by an executive's
+  relative) and small rounding differences in `usd_value` (prices are rounded to cents).
